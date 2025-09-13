@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="Utility API">
+    <meta property="og:description" content="Api Testing 24/7">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Utility API">
+    <meta name="twitter:description" content="Api Testing 24/7">
+    
+    <title>Utility API</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .api-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .api-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .api-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .api-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #4a5568;
+        }
+
+        .api-card p {
+            color: #718096;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .image-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .api-image {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .avatar-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 3px solid #667eea;
+        }
+        
+        .pokemon-image {
+            width: 150px;
+            height: 150px;
+        }
+
+        .loading {
+            display: none;
+            color: #667eea;
+            font-style: italic;
+        }
+
+        .error {
+            color: #e53e3e;
+            font-weight: bold;
+        }
+
+        .info-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-top: 30px;
+        }
+
+        .endpoint-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .endpoint-list li {
+            background: #f7fafc;
+            margin: 10px 0;
+            padding: 15px;
+            border-left: 4px solid #667eea;
+            border-radius: 8px;
+        }
+
+        .endpoint-list code {
+            background: #edf2f7;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .github-info-details, .pokemon-info-details {
+            margin-top: 15px;
+            text-align: left;
+        }
+
+        .github-info-details strong, .pokemon-info-details strong {
+            display: inline-block;
+            width: 120px;
+        }
+        
+        #password-generator input[type="text"], #password-generator input[type="number"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        #password-generator label {
+            display: block;
+            margin-bottom: 5px;
+            color: #4a5568;
+        }
+        
+        #password-generator .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        #password-generator .checkbox-group label {
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .color-box {
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            margin-top: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .api-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Utility API Server</h1>
+            <p>Utility Api Join Server https://discord.gg/Zg2XkS5hq9 </p>
+        </div>
+
+        <div class="api-grid">
+            <div class="api-card">
+                <h3>🐕 Dogs</h3>
+                <p>Get random dog images</p>
+                <button class="btn" onclick="fetchImage('dog')">Get Dog Image</button>
+                <div class="image-container" id="dog-container">
+                    <div class="loading" id="dog-loading">Loading...</div>
+                </div>
+            </div>
+
+            <div class="api-card">
+                <h3>🐱 Cats</h3>
+                <p>Get random cat images</p>
+                <button class="btn" onclick="fetchImage('cat')">Get Cat Image</button>
+                <div class="image-container" id="cat-container">
+                    <div class="loading" id="cat-loading">Loading...</div>
+                </div>
+            </div>
+
+            <div class="api-card">
+                <h3>🐱‍💻 Neko</h3>
+                <p>Get random anime cat girl images</p>
+                <button class="btn" onclick="fetchImage('neko')">Get Neko Image</button>
+                <div class="image-container" id="neko-container">
+                    <div class="loading" id="neko-loading">Loading...</div>
+                </div>
+            </div>
+
+            <div class="api-card">
+                <h3>😂 Memes</h3>
+                <p>Get random memes from Reddit with metadata and caching</p>
+                <button class="btn" onclick="fetchImage('meme')">Get Meme</button>
+                <div class="image-container" id="meme-container">
+                    <div class="loading" id="meme-loading">Loading...</div>
+                </div>
+            </div>
+
+            <div class="api-card">
+                <h3>🔍 Roblox Info</h3>
+                <p>Get detailed Roblox user information</p>
+                <input type="text" id="roblox-username" placeholder="Enter username..." style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                <button class="btn" onclick="fetchRobloxInfo()">Get Info</button>
+                <div class="image-container" id="roblox-info-container">
+                </div>
+            </div>
+
+            <div class="api-card">
+                <h3>🔗 Link Generator</h3>
+                <p>Generate executor links for various services</p>
+                <select id="service-select" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                    <option value="">Select a service...</option>
+                    <option value="fluxus">Fluxus</option>
+                    <option value="arceus">Arceus</option>
+                    <option value="delta">Delta</option>
+                    <option value="deltaios">Delta iOS</option>
+                    <option value="cryptic">Cryptic</option>
+                    <option value="hydrogen">Hydrogen</option>
+                    <option value="vegax">VegaX</option>
+                    <option value="trigon">Trigon</option>
+                    <option value="cacti">Cacti</option>
+                    <option value="evon">Evon</option>
+                </select>
+                <button class="btn" onclick="generateLink()">Generate Link</button>
+                <div class="image-container" id="link-generator-container">
+                    <p id="generated-link" style="font-family: monospace; font-size: 1rem; word-wrap: break-word;"></p>
+                    <button class="btn" id="copy-link-btn" onclick="copyGeneratedLink()" style="display: none;">Copy Link</button>
+                </div>
+            </div>
+
+            <div class="api-card">
+                <h3>💬 Discord Info</h3>
+                <p>Get Discord server information from invite</p>
+                <input type="text" id="discord-invite" placeholder="Enter invite code or URL..." style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                <button class="btn" onclick="fetchDiscordInfo()">Get Server Info</button>
+                <div class="image-container" id="discord-info-container">
+                </div>
+            </div>
+
+            <div class="api-card">
+                <h3>🐶 MyDog Generator</h3>
+                <p>Create custom image with two avatars</p>
+                <input type="text" id="avatar1-url" placeholder="Enter first avatar URL..." style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                <input type="text" id="avatar2-url" placeholder="Enter second avatar URL..." style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                <button class="btn" onclick="generateMyDog()">Generate MyDog Image</button>
+                <div class="image-container" id="mydog-container">
+                    <div class="loading" id="mydog-loading" style="display: none;">Loading...</div>
+                </div>
+            </div>
+
+            <div class="api-card">
+                <h3>☁️ Weather Info</h3>
+                <p>Get weather information for any location</p>
+                <input type="text" id="weather-location" placeholder="Enter city name (e.g., Toronto, London)..." style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                <button class="btn" onclick="fetchWeatherInfo()">Get Weather</button>
+                <div class="image-container" id="weather-container">
+                </div>
+            </div>
+
+            <div class="api-card">
+                <h3>🎉 Welcome Card Generator</h3>
+                <p>Generate custom welcome cards with background and avatar</p>
+                <input type="text" id="welcome-background" placeholder="Background image URL..." style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                <input type="text" id="welcome-text1" placeholder="Text 1 (Name)..." style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                <input type="text" id="welcome-text2" placeholder="Text 2 (Welcome message)..." style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                <input type="text" id="welcome-text3" placeholder="Text 3 (Member info)..." style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                <input type="text" id="welcome-avatar" placeholder="Avatar image URL..." style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                <button class="btn" onclick="generateWelcomeCard()">Generate Welcome Card</button>
+                <div class="image-container" id="welcome-card-container">
+                </div>
+            </div>
+            
+            <div class="api-card">
+                <h3>🔗 URL Shortener</h3>
+                <p>Shorten your long links</p>
+                <input type="text" id="url-input" placeholder="Enter your URL..." style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                <button class="btn" onclick="shortenUrl()">Shorten URL</button>
+                <div class="image-container" id="shorten-container">
+                    <p id="shortened-url"></p>
+                    <button class="btn" id="copy-btn" onclick="copyUrl()" style="display: none;">Copy URL</button>
+                </div>
+            </div>
+
+            <div class="api-card">
+                <h3>💻 GitHub Info</h3>
+                <p>Get a user's GitHub profile info</p>
+                <input type="text" id="github-username" placeholder="Enter username..." style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                <button class="btn" onclick="fetchGithubInfo()">Get Info</button>
+                <div class="image-container" id="github-info-container">
+                </div>
+            </div>
+
+            <div class="api-card">
+                <h3>🎨 AI Image Generator</h3>
+                <p>Generate AI images from text prompts</p>
+                <input type="text" id="image-prompt" placeholder="Enter your prompt..." style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                <button class="btn" onclick="generateImage()">Generate Image</button>
+                <div class="image-container" id="generate-container">
+                    <div class="loading" id="generate-loading">Loading...</div>
+                </div>
+            </div>
+            
+            <div class="api-card">
+                <h3>🎮 Pokémon Info</h3>
+                <p>Get stats and info for a Pokémon</p>
+                <input type="text" id="pokemon-name" placeholder="Enter Pokémon name..." style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                <button class="btn" onclick="fetchPokemonInfo()">Get Info</button>
+                <div class="image-container" id="pokemon-info-container">
+                </div>
+            </div>
+
+            <div class="api-card">
+                <h3>🔑 Password Generator</h3>
+                <p>Generate strong, random passwords</p>
+                <div id="password-generator">
+                    <label for="password-length">Length:</label>
+                    <input type="number" id="password-length" value="12" min="8" max="64">
+                    <div class="checkbox-group">
+                        <label>
+                            <input type="checkbox" id="include-uppercase" checked> Uppercase
+                        </label>
+                        <label>
+                            <input type="checkbox" id="include-digits" checked> Digits
+                        </label>
+                        <label>
+                            <input type="checkbox" id="include-special" checked> Special Chars
+                        </label>
+                    </div>
+                </div>
+                <button class="btn" onclick="generatePassword()">Generate Password</button>
+                <div class="image-container" id="password-container">
+                    <p id="generated-password" style="font-family: monospace; font-size: 1.2rem; word-wrap: break-word;"></p>
+                    <button class="btn" id="copy-password-btn" onclick="copyPassword()" style="display: none;">Copy Password</button>
+                </div>
+            </div>
+
+            <div class="api-card">
+                <h3>🎨 Random Color</h3>
+                <p>Get a random hex color code</p>
+                <button class="btn" onclick="fetchRandomColor()">Get Random Color</button>
+                <div class="image-container" id="random-color-container">
+                    <div class="loading" id="color-loading" style="display: none;">Loading...</div>
+                    <p id="color-code" style="font-family: monospace; font-size: 1.2rem; margin-top: 15px;"></p>
+                    <div id="color-box" class="color-box" style="display: none;"></div>
+                </div>
+            </div>
+            
+
+        </div>
+
+        <div class="info-section">
+            <h3>📚 API Endpoints</h3>
+            <ul class="endpoint-list">
+                <li><code>GET /api/dog</code> - Get random dog image with caching</li>
+                <li><code>GET /api/cat</code> - Get random cat image with caching</li>
+                <li><code>GET /api/neko</code> - Get random neko image with caching</li>
+                <li><code>GET /api/meme</code> - Get random meme with caching</li>
+                <li><code>GET /api/roblox?username=</code> - Get Roblox user information</li>
+                <li><code>GET /api/gen?service=</code> - Generate executor links</li>
+                <li><code>GET /api/discord?code=</code> - Get Discord server info</li>
+                <li><code>GET /api/mydog?avatar1=&avatar2=</code> - Generate custom image with two avatars</li>
+                <li><code>GET /api/weather?p=</code> - Get weather information for a location</li>
+                <li><code>GET /api/welcomecard?background=&text1=&text2=&text3=&avatar=</code> - Generate welcome cards</li>
+                <li><code>GET /api/shorten?url=</code> - Shorten a URL</li>
+                <li><code>GET /api/github?username=</code> - Get GitHub user info</li>
+                <li><code>GET /api/image?prompt=text</code> - Generate AI image from text prompt</li>
+                <li><code>GET /api/pokemon?name=</code> - Get Pokémon info by name</li>
+                <li><code>GET /api/password?length=...&uppercase=...&digits=...&special=...</code> - Generate a password</li>
+                <li><code>GET /api/randomcolor</code> - Get a random hex color code</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        async function fetchImage(type) {
+            const container = document.getElementById(`${type}-container`);
+            
+            container.innerHTML = `<div class="loading" style="display: block;">Loading...</div>`;
+            
+            try {
+                const response = await fetch(`/api/${type}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    let imageHtml = `<img src="${data.image_url}" alt="${type} image" class="api-image">`;
+                    
+                    if (type === 'meme') {
+                        imageHtml += `
+                            <div style="margin-top: 15px; text-align: left;">
+                                <strong>Title:</strong> ${data.title}<br>
+                                <strong>Subreddit:</strong> ${data.subreddit}<br>
+                                <strong>Author:</strong> ${data.author}<br>
+                                <strong>Upvotes:</strong> ${data.ups}
+                            </div>
+                        `;
+                    }
+                    
+                    container.innerHTML = imageHtml;
+                } else {
+                    container.innerHTML = `<div class="error">Error: ${data.error}</div>`;
+                }
+            } catch (error) {
+                container.innerHTML = `<div class="error">Network error: ${error.message}</div>`;
+            }
+        }
+        
+        async function fetchRobloxInfo() {
+            const username = document.getElementById('roblox-username').value.trim();
+            const container = document.getElementById('roblox-info-container');
+            
+            if (!username) {
+                container.innerHTML = '<div class="error">Please enter a username</div>';
+                return;
+            }
+            
+            container.innerHTML = `<div class="loading" style="display: block;">Loading...</div>`;
+            
+            try {
+                const response = await fetch(`/api/roblox?username=${encodeURIComponent(username)}`);
+                
+                // Check if response is JSON
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    const text = await response.text();
+                    console.error('Non-JSON response:', text);
+                    container.innerHTML = `<div class="error">Server returned invalid response. Please try again.</div>`;
+                    return;
+                }
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    let infoHtml = `
+                        <div style="text-align: center;">
+                            ${data.avatar.imageUrl ? `<img src="${data.avatar.imageUrl}" alt="Roblox Avatar" class="avatar-image">` : '<div class="error">No avatar available</div>'}
+                        </div>
+                        <div class="github-info-details">
+                            <p><strong>Username:</strong> ${data.username}</p>
+                            <p><strong>Display Name:</strong> ${data.displayName || 'N/A'}</p>
+                            <p><strong>Description:</strong> ${data.description}</p>
+                            <p><strong>Friends:</strong> ${data.friends}</p>
+                            <p><strong>Created:</strong> ${new Date(data.created).toLocaleDateString()}</p>
+                            <p><strong>Verified Badge:</strong> ${data.hasVerifiedBadge ? 'Yes' : 'No'}</p>
+                            <p><strong>Profile URL:</strong> <a href="${data.profileUrl}" target="_blank">View Profile</a></p>
+                        </div>
+                    `;
+                    container.innerHTML = infoHtml;
+                } else {
+                    container.innerHTML = `<div class="error">Error: ${data.error}</div>`;
+                }
+            } catch (error) {
+                container.innerHTML = `<div class="error">Network error: ${error.message}</div>`;
+            }
+        }
+        
+        async function generateLink() {
+            const service = document.getElementById('service-select').value;
+            const container = document.getElementById('link-generator-container');
+            const generatedLink = document.getElementById('generated-link');
+            const copyBtn = document.getElementById('copy-link-btn');
+            
+            if (!service) {
+                generatedLink.textContent = 'Please select a service.';
+                generatedLink.style.color = 'red';
+                copyBtn.style.display = 'none';
+                return;
+            }
+            
+            generatedLink.textContent = 'Generating...';
+            generatedLink.style.color = '#667eea';
+            copyBtn.style.display = 'none';
+            
+            try {
+                const response = await fetch(`/api/gen?service=${encodeURIComponent(service)}`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    generatedLink.textContent = data.result;
+                    generatedLink.style.color = '#333';
+                    copyBtn.style.display = 'inline-block';
+                } else {
+                    generatedLink.textContent = `Error: ${data.result || data.error}`;
+                    generatedLink.style.color = 'red';
+                }
+            } catch (error) {
+                generatedLink.textContent = `Network error: ${error.message}`;
+                generatedLink.style.color = 'red';
+            }
+        }
+        
+        function copyGeneratedLink() {
+            const generatedLink = document.getElementById('generated-link');
+            const textToCopy = generatedLink.textContent;
+            
+            const tempInput = document.createElement('textarea');
+            tempInput.value = textToCopy;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            
+            try {
+                document.execCommand('copy');
+                alert('Link copied to clipboard!');
+            } catch (err) {
+                alert('Failed to copy link. Please copy it manually.');
+            } finally {
+                document.body.removeChild(tempInput);
+            }
+        }
+        
+        async function fetchDiscordInfo() {
+            const invite = document.getElementById('discord-invite').value.trim();
+            const container = document.getElementById('discord-info-container');
+            
+            if (!invite) {
+                container.innerHTML = '<div class="error">Please enter an invite code or URL</div>';
+                return;
+            }
+            
+            container.innerHTML = `<div class="loading" style="display: block;">Loading...</div>`;
+            
+            try {
+                const response = await fetch(`/api/discord?code=${encodeURIComponent(invite)}`);
+                
+                // Check if response is JSON
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    const text = await response.text();
+                    console.error('Non-JSON response:', text);
+                    container.innerHTML = `<div class="error">Server returned invalid response. Please try again.</div>`;
+                    return;
+                }
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    let infoHtml = `
+                        <div style="text-align: center;">
+                            ${data.icon ? `<img src="${data.icon}" alt="Server Icon" class="avatar-image">` : '<div class="error">No server icon</div>'}
+                        </div>
+                        <div class="github-info-details">
+                            <p><strong>Name:</strong> ${data.name}</p>
+                            <p><strong>Description:</strong> ${data.description}</p>
+                            <p><strong>Members:</strong> ${data.member_count}</p>
+                            <p><strong>Online:</strong> ${data.online_count}</p>
+                            <p><strong>Boost Level:</strong> ${data.boost_level}</p>
+                            <p><strong>Verification Level:</strong> ${data.verification_level}</p>
+                            ${data.invite_info.channel ? `<p><strong>Channel:</strong> #${data.invite_info.channel.name}</p>` : ''}
+                        </div>
+                    `;
+                    container.innerHTML = infoHtml;
+                } else {
+                    container.innerHTML = `<div class="error">Error: ${data.error}</div>`;
+                }
+            } catch (error) {
+                container.innerHTML = `<div class="error">Network error: ${error.message}</div>`;
+            }
+        }
+        
+        async function generateMyDog() {
+            const avatar1 = document.getElementById('avatar1-url').value.trim();
+            const avatar2 = document.getElementById('avatar2-url').value.trim();
+            const container = document.getElementById('mydog-container');
+            
+            if (!avatar1 || !avatar2) {
+                container.innerHTML = '<div class="error">Please enter both avatar URLs</div>';
+                return;
+            }
+            
+            container.innerHTML = `<div class="loading" style="display: block;">Generating image...</div>`;
+            
+            try {
+                const response = await fetch(`/api/mydog?avatar1=${encodeURIComponent(avatar1)}&avatar2=${encodeURIComponent(avatar2)}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    let imageHtml = `<img src="${data.image_url}" alt="MyDog generated image" class="api-image">`;
+                    container.innerHTML = imageHtml;
+                } else {
+                    container.innerHTML = `<div class="error">Error: ${data.error}</div>`;
+                }
+            } catch (error) {
+                container.innerHTML = `<div class="error">Network error: ${error.message}</div>`;
+            }
+        }
+        
+        async function fetchWeatherInfo() {
+            const location = document.getElementById('weather-location').value.trim();
+            const container = document.getElementById('weather-container');
+            
+            if (!location) {
+                container.innerHTML = '<div class="error">Please enter a location</div>';
+                return;
+            }
+            
+            container.innerHTML = `<div class="loading" style="display: block;">Loading weather data...</div>`;
+            
+            try {
+                const response = await fetch(`/api/weather?p=${encodeURIComponent(location)}`);
+                const data = await response.json();
+                
+                if (response.ok && !data.error && data.message && data.message.length > 0) {
+                    const weatherData = data.message[0]; // PopCat API returns data in message array
+                    let weatherHtml = `
+                        <div class="github-info-details">
+                            <h4>${weatherData.location.name}</h4>
+                            <p><strong>Temperature:</strong> ${weatherData.current.temperature}°C (${Math.round(weatherData.current.temperature * 9/5 + 32)}°F)</p>
+                            <p><strong>Condition:</strong> ${weatherData.current.skytext}</p>
+                            <p><strong>Date:</strong> ${weatherData.current.date}</p>
+                            <p><strong>Observation Time:</strong> ${weatherData.current.observationtime}</p>
+                            <p><strong>Location:</strong> ${weatherData.current.observationpoint}</p>
+                        </div>
+                    `;
+                    
+                    if (weatherData.forecast && weatherData.forecast.length > 0) {
+                        weatherHtml += '<div class="github-info-details" style="margin-top: 15px;"><h4>5-Day Forecast:</h4>';
+                        weatherData.forecast.slice(0, 5).forEach(day => {
+                            weatherHtml += `
+                                <p><strong>${day.day}:</strong> ${day.low}°C - ${day.high}°C, ${day.skytextday}</p>
+                            `;
+                        });
+                        weatherHtml += '</div>';
+                    }
+                    
+                    container.innerHTML = weatherHtml;
+                } else {
+                    container.innerHTML = `<div class="error">Error: ${data.error}</div>`;
+                }
+            } catch (error) {
+                container.innerHTML = `<div class="error">Network error: ${error.message}</div>`;
+            }
+        }
+        
+        async function generateWelcomeCard() {
+            const background = document.getElementById('welcome-background').value.trim();
+            const text1 = document.getElementById('welcome-text1').value.trim();
+            const text2 = document.getElementById('welcome-text2').value.trim();
+            const text3 = document.getElementById('welcome-text3').value.trim();
+            const avatar = document.getElementById('welcome-avatar').value.trim();
+            const container = document.getElementById('welcome-card-container');
+            
+            if (!background || !text1 || !text2 || !text3 || !avatar) {
+                container.innerHTML = '<div class="error">Please fill in all fields</div>';
+                return;
+            }
+            
+            container.innerHTML = `<div class="loading" style="display: block;">Generating welcome card...</div>`;
+            
+            try {
+                const response = await fetch(`/api/welcomecard?background=${encodeURIComponent(background)}&text1=${encodeURIComponent(text1)}&text2=${encodeURIComponent(text2)}&text3=${encodeURIComponent(text3)}&avatar=${encodeURIComponent(avatar)}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    let imageHtml = `<img src="${data.image_url}" alt="Generated welcome card" class="api-image">`;
+                    container.innerHTML = imageHtml;
+                } else {
+                    container.innerHTML = `<div class="error">Error: ${data.error}</div>`;
+                }
+            } catch (error) {
+                container.innerHTML = `<div class="error">Network error: ${error.message}</div>`;
+            }
+        }
+
+        async function fetchGithubInfo() {
+            const username = document.getElementById('github-username').value.trim();
+            const container = document.getElementById('github-info-container');
+            
+            if (!username) {
+                container.innerHTML = '<div class="error">Please enter a username</div>';
+                return;
+            }
+            
+            container.innerHTML = `<div class="loading" style="display: block;">Loading...</div>`;
+
+            try {
+                const response = await fetch(`/api/github?username=${encodeURIComponent(username)}`);
+                
+                // Check if response is JSON
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    const text = await response.text();
+                    console.error('Non-JSON response:', text);
+                    container.innerHTML = `<div class="error">Server returned invalid response. Please try again.</div>`;
+                    return;
+                }
+                
+                const data = await response.json();
+                
+                if (response.ok && !data.error) {
+                    let infoHtml = `
+                        <div style="text-align: center;">
+                            <img src="${data.avatar}" alt="GitHub Avatar" class="avatar-image">
+                        </div>
+                        <div class="github-info-details">
+                            <p><strong>Username:</strong> ${data.username}</p>
+                            ${data.name ? `<p><strong>Name:</strong> ${data.name}</p>` : ''}
+                            ${data.bio ? `<p><strong>Bio:</strong> ${data.bio}</p>` : ''}
+                            ${data.location ? `<p><strong>Location:</strong> ${data.location}</p>` : ''}
+                            ${data.company ? `<p><strong>Company:</strong> ${data.company}</p>` : ''}
+                            ${data.blog ? `<p><strong>Blog:</strong> ${data.blog}</p>` : ''}
+                            <p><strong>Public Repos:</strong> ${data.publicRepos}</p>
+                            <p><strong>Followers:</strong> ${data.followers}</p>
+                            <p><strong>Following:</strong> ${data.following}</p>
+                            <p><strong>Total Stars:</strong> ${data.statistics.totalStars}</p>
+                            <p><strong>Total Forks:</strong> ${data.statistics.totalForks}</p>
+                            ${data.statistics.mostStarredRepo ? `<p><strong>Most Starred Repo:</strong> ${data.statistics.mostStarredRepo}</p>` : ''}
+                            ${data.statistics.languages.length > 0 ? `<p><strong>Languages:</strong> ${data.statistics.languages.join(', ')}</p>` : ''}
+                            <p><strong>Created At:</strong> ${new Date(data.created).toLocaleDateString()}</p>
+                        </div>
+                    `;
+                    container.innerHTML = infoHtml;
+                } else {
+                    container.innerHTML = `<div class="error">Error: ${data.error || 'Unknown error'}</div>`;
+                }
+            } catch (error) {
+                container.innerHTML = `<div class="error">Network error: ${error.message}</div>`;
+            }
+        }
+        
+        async function fetchPokemonInfo() {
+            const pokemonName = document.getElementById('pokemon-name').value.trim().toLowerCase();
+            const container = document.getElementById('pokemon-info-container');
+
+            if (!pokemonName) {
+                container.innerHTML = '<div class="error">Please enter a Pokémon name</div>';
+                return;
+            }
+
+            container.innerHTML = `<div class="loading" style="display: block;">Loading Pokémon info...</div>`;
+
+            try {
+                const response = await fetch(`/api/pokemon?name=${encodeURIComponent(pokemonName)}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const statsHtml = Object.entries(data.stats)
+                        .map(([statName, statValue]) => `<strong>${statName}:</strong> [${statValue}]`)
+                        .join('<br>');
+                    
+                    const typesHtml = `<strong>Type:</strong> ${data.types.join(', ')}`;
+
+                    const abilitiesHtml = `<strong>Abilities:</strong> ${data.abilities.map(a => a.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')).join(', ')}`;
+                    
+                    const movesHtml = `<strong>Moves:</strong> ${data.moves.map(m => m.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')).join(', ')}`;
+
+                    const infoHtml = `
+                        <div style="text-align: center;">
+                            <img src="${data.image_url}" alt="${data.name} image" class="pokemon-image">
+                            <h3>${data.name.charAt(0).toUpperCase() + data.name.slice(1)}</h3>
+                        </div>
+                        <div class="pokemon-info-details">
+                            <p>${movesHtml}</p>
+                            <p>${statsHtml}</p>
+                            <p>${abilitiesHtml}</p>
+                            <p><strong>Height:</strong> ${data.height}</p>
+                            <p><strong>Weight:</strong> ${data.weight}</p>
+                            <p>${typesHtml}</p>
+                        </div>
+                    `;
+                    container.innerHTML = infoHtml;
+                } else {
+                    container.innerHTML = `<div class="error">Error: ${data.error}</div>`;
+                }
+            } catch (error) {
+                container.innerHTML = `<div class="error">Network error: ${error.message}</div>`;
+            }
+        }
+
+        async function generateImage() {
+            const prompt = document.getElementById('image-prompt').value.trim();
+            const container = document.getElementById('generate-container');
+            
+            if (!prompt) {
+                container.innerHTML = '<div class="error">Please enter a prompt</div>';
+                return;
+            }
+            
+            container.innerHTML = `<div class="loading" style="display: block;">Generating image...</div>`;
+            
+            try {
+                const response = await fetch(`/api/image?prompt=${encodeURIComponent(prompt)}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    let imageHtml = `<img src="${data.image_url}" alt="Generated image" class="api-image">`;
+                    imageHtml += `
+                        <div style="margin-top: 15px; text-align: left;">
+                            <strong>Prompt:</strong> ${data.prompt}<br>
+                            <strong>Dimensions:</strong> ${data.width}x${data.height}<br>
+                            <strong>Seed:</strong> ${data.seed}
+                        </div>
+                    `;
+                    container.innerHTML = imageHtml;
+                } else {
+                    container.innerHTML = `<div class="error">Error: ${data.error}</div>`;
+                }
+            } catch (error) {
+                container.innerHTML = `<div class="error">Network error: ${error.message}</div>`;
+            }
+        }
+
+        async function shortenUrl() {
+            const urlInput = document.getElementById('url-input').value.trim();
+            const shortenedUrl = document.getElementById('shortened-url');
+            const copyBtn = document.getElementById('copy-btn');
+
+            if (!urlInput) {
+                shortenedUrl.textContent = 'Please enter a URL.';
+                shortenedUrl.style.color = 'red';
+                copyBtn.style.display = 'none';
+                return;
+            }
+            
+            shortenedUrl.textContent = 'Shortening...';
+            shortenedUrl.style.color = '#667eea';
+            copyBtn.style.display = 'none';
+
+            try {
+                const response = await fetch(`/api/shorten?url=${encodeURIComponent(urlInput)}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    shortenedUrl.textContent = data.short_url;
+                    shortenedUrl.style.color = '#333';
+                    copyBtn.style.display = 'inline-block';
+                } else {
+                    shortenedUrl.textContent = `Error: ${data.error}`;
+                    shortenedUrl.style.color = 'red';
+                }
+            } catch (error) {
+                shortenedUrl.textContent = `Network error: ${error.message}`;
+                shortenedUrl.style.color = 'red';
+            }
+        }
+
+        function copyUrl() {
+            const shortenedUrl = document.getElementById('shortened-url');
+            const textToCopy = shortenedUrl.textContent;
+            
+            const tempInput = document.createElement('textarea');
+            tempInput.value = textToCopy;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            
+            try {
+                document.execCommand('copy');
+                alert('URL copied to clipboard!');
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+                alert('Failed to copy URL. Please copy it manually.');
+            } finally {
+                document.body.removeChild(tempInput);
+            }
+        }
+
+        async function generatePassword() {
+            const length = document.getElementById('password-length').value;
+            const uppercase = document.getElementById('include-uppercase').checked;
+            const digits = document.getElementById('include-digits').checked;
+            const special = document.getElementById('include-special').checked;
+            
+            const passwordContainer = document.getElementById('password-container');
+            const generatedPassword = document.getElementById('generated-password');
+            const copyBtn = document.getElementById('copy-password-btn');
+
+            passwordContainer.innerHTML = `<div class="loading" style="display: block;">Generating...</div>`;
+            copyBtn.style.display = 'none';
+
+            try {
+                const response = await fetch(`/api/password?length=${length}&uppercase=${uppercase}&digits=${digits}&special=${special}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    generatedPassword.textContent = data.password;
+                    passwordContainer.innerHTML = '';
+                    passwordContainer.appendChild(generatedPassword);
+                    passwordContainer.appendChild(copyBtn);
+                    copyBtn.style.display = 'inline-block';
+                } else {
+                    passwordContainer.innerHTML = `<div class="error">Error: ${data.error}</div>`;
+                }
+            } catch (error) {
+                passwordContainer.innerHTML = `<div class="error">Network error: ${error.message}</div>`;
+            }
+        }
+
+        function copyPassword() {
+            const passwordText = document.getElementById('generated-password').textContent;
+            const tempInput = document.createElement('textarea');
+            tempInput.value = passwordText;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            try {
+                document.execCommand('copy');
+                alert('Password copied to clipboard!');
+            } catch (err) {
+                console.error('Failed to copy password: ', err);
+                alert('Failed to copy password. Please copy it manually.');
+            } finally {
+                document.body.removeChild(tempInput);
+            }
+        }
+
+        async function fetchRandomColor() {
+            const container = document.getElementById('random-color-container');
+            const loading = document.getElementById('color-loading');
+            const colorCode = document.getElementById('color-code');
+            const colorBox = document.getElementById('color-box');
+
+            loading.style.display = 'block';
+            colorCode.textContent = '';
+            colorBox.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/randomcolor');
+                const data = await response.json();
+                
+                if (data.success) {
+                    loading.style.display = 'none';
+                    colorCode.textContent = data.color;
+                    colorBox.style.backgroundColor = data.color;
+                    colorBox.style.display = 'block';
+                } else {
+                    loading.style.display = 'none';
+                    container.innerHTML = `<div class="error">Error: ${data.error}</div>`;
+                }
+            } catch (error) {
+                loading.style.display = 'none';
+                container.innerHTML = `<div class="error">Network error: ${error.message}</div>`;
+            }
+        }
+
+        // Load sample images on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => fetchImage('dog'), 500);
+            setTimeout(() => fetchImage('cat'), 1000);
+            setTimeout(() => fetchImage('neko'), 1500);
+            setTimeout(() => fetchImage('meme'), 2000);
+        });
+    </script>
+</body>
+</html>

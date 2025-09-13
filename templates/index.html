@@ -409,6 +409,40 @@
                     <div id="color-box" class="color-box" style="display: none;"></div>
                 </div>
             </div>
+
+            <div class="api-card">
+                <h3>🌐 Fake IP Generator</h3>
+                <p>Generate random fake IP addresses for testing purposes</p>
+                <button class="btn" onclick="generateFakeIP()">Generate Fake IP</button>
+                <div class="image-container" id="fake-ip-container">
+                    <div class="loading" id="fake-ip-loading" style="display: none;">Loading...</div>
+                    <p id="fake-ip-result" style="font-family: monospace; font-size: 1.2rem; margin-top: 15px;"></p>
+                    <button class="btn" id="copy-ip-btn" onclick="copyFakeIP()" style="display: none;">Copy IP</button>
+                </div>
+            </div>
+
+            <div class="api-card">
+                <h3>💎 Discord Nitro Generator</h3>
+                <p>Generate fake Discord Nitro codes for testing</p>
+                <button class="btn" onclick="generateNitroCode()">Generate Nitro Code</button>
+                <div class="image-container" id="nitro-container">
+                    <div class="loading" id="nitro-loading" style="display: none;">Loading...</div>
+                    <p id="nitro-code" style="font-family: monospace; font-size: 1rem; margin-top: 15px; word-wrap: break-word;"></p>
+                    <p id="nitro-url" style="font-family: monospace; font-size: 0.9rem; color: #667eea; margin-top: 10px;"></p>
+                    <p id="nitro-note" style="font-size: 0.8rem; color: #e53e3e; margin-top: 10px; font-style: italic;"></p>
+                    <button class="btn" id="copy-nitro-btn" onclick="copyNitroCode()" style="display: none;">Copy Code</button>
+                </div>
+            </div>
+
+            <div class="api-card">
+                <h3>🎬 YouTube Info</h3>
+                <p>Get detailed information about YouTube videos by URL or search query</p>
+                <input type="text" id="youtube-query" placeholder="Enter YouTube URL or video title..." style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                <button class="btn" onclick="fetchYouTubeInfo()">Get Video Info</button>
+                <div class="image-container" id="youtube-container">
+                    <div class="loading" id="youtube-loading" style="display: none;">Loading...</div>
+                </div>
+            </div>
             
 
         </div>
@@ -432,6 +466,9 @@
                 <li><code>GET /api/pokemon?name=</code> - Get Pokémon info by name</li>
                 <li><code>GET /api/password?length=...&uppercase=...&digits=...&special=...</code> - Generate a password</li>
                 <li><code>GET /api/randomcolor</code> - Get a random hex color code</li>
+                <li><code>GET /api/fakeip</code> - Generate random fake IP addresses for testing</li>
+                <li><code>GET /api/nitro</code> - Generate fake Discord Nitro codes for testing</li>
+                <li><code>GET /api/youtube?query=URL_or_search_term</code> - Get YouTube video information by URL or search</li>
             </ul>
         </div>
     </div>
@@ -987,6 +1024,148 @@
                 } else {
                     loading.style.display = 'none';
                     container.innerHTML = `<div class="error">Error: ${data.error}</div>`;
+                }
+            } catch (error) {
+                loading.style.display = 'none';
+                container.innerHTML = `<div class="error">Network error: ${error.message}</div>`;
+            }
+        }
+
+        async function generateFakeIP() {
+            const container = document.getElementById('fake-ip-container');
+            const loading = document.getElementById('fake-ip-loading');
+            const result = document.getElementById('fake-ip-result');
+            const copyBtn = document.getElementById('copy-ip-btn');
+
+            loading.style.display = 'block';
+            result.textContent = '';
+            copyBtn.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/fakeip');
+                const data = await response.json();
+                
+                if (data.success) {
+                    loading.style.display = 'none';
+                    result.textContent = data.ip;
+                    copyBtn.style.display = 'inline-block';
+                } else {
+                    loading.style.display = 'none';
+                    container.innerHTML = `<div class="error">Error: ${data.error}</div>`;
+                }
+            } catch (error) {
+                loading.style.display = 'none';
+                container.innerHTML = `<div class="error">Network error: ${error.message}</div>`;
+            }
+        }
+
+        function copyFakeIP() {
+            const ipText = document.getElementById('fake-ip-result').textContent;
+            const tempInput = document.createElement('textarea');
+            tempInput.value = ipText;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            try {
+                document.execCommand('copy');
+                alert('IP address copied to clipboard!');
+            } catch (err) {
+                console.error('Failed to copy IP: ', err);
+                alert('Failed to copy IP. Please copy it manually.');
+            } finally {
+                document.body.removeChild(tempInput);
+            }
+        }
+
+        async function generateNitroCode() {
+            const container = document.getElementById('nitro-container');
+            const loading = document.getElementById('nitro-loading');
+            const codeElement = document.getElementById('nitro-code');
+            const urlElement = document.getElementById('nitro-url');
+            const noteElement = document.getElementById('nitro-note');
+            const copyBtn = document.getElementById('copy-nitro-btn');
+
+            loading.style.display = 'block';
+            codeElement.textContent = '';
+            urlElement.textContent = '';
+            noteElement.textContent = '';
+            copyBtn.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/nitro');
+                const data = await response.json();
+                
+                if (data.success) {
+                    loading.style.display = 'none';
+                    codeElement.textContent = `Code: ${data.code}`;
+                    urlElement.textContent = data.url;
+                    noteElement.textContent = data.note;
+                    copyBtn.style.display = 'inline-block';
+                } else {
+                    loading.style.display = 'none';
+                    container.innerHTML = `<div class="error">Error: ${data.error}</div>`;
+                }
+            } catch (error) {
+                loading.style.display = 'none';
+                container.innerHTML = `<div class="error">Network error: ${error.message}</div>`;
+            }
+        }
+
+        function copyNitroCode() {
+            const codeText = document.getElementById('nitro-code').textContent.replace('Code: ', '');
+            const tempInput = document.createElement('textarea');
+            tempInput.value = codeText;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            try {
+                document.execCommand('copy');
+                alert('Nitro code copied to clipboard!');
+            } catch (err) {
+                console.error('Failed to copy Nitro code: ', err);
+                alert('Failed to copy Nitro code. Please copy it manually.');
+            } finally {
+                document.body.removeChild(tempInput);
+            }
+        }
+
+        async function fetchYouTubeInfo() {
+            const query = document.getElementById('youtube-query').value.trim();
+            const container = document.getElementById('youtube-container');
+            const loading = document.getElementById('youtube-loading');
+            
+            if (!query) {
+                container.innerHTML = '<div class="error">Please enter a YouTube URL or video title</div>';
+                return;
+            }
+            
+            loading.style.display = 'block';
+            container.innerHTML = '<div class="loading" style="display: block;">Loading...</div>';
+            
+            try {
+                const response = await fetch(`/api/youtube?query=${encodeURIComponent(query)}`);
+                const result = await response.json();
+                
+                if (result.success && result.data) {
+                    const data = result.data;
+                    let infoHtml = `
+                        <div style="text-align: center;">
+                            ${data.thumbnail ? `<img src="${data.thumbnail}" alt="Video Thumbnail" class="api-image" style="max-width: 300px;">` : ''}
+                        </div>
+                        <div class="github-info-details">
+                            <p><strong>Title:</strong> ${data.title}</p>
+                            <p><strong>Channel:</strong> ${data.uploader}</p>
+                            <p><strong>Duration:</strong> ${data.duration_string}</p>
+                            <p><strong>Views:</strong> ${data.views ? data.views.toLocaleString() : 'N/A'}</p>
+                            <p><strong>Likes:</strong> ${data.likes ? data.likes.toLocaleString() : 'N/A'}</p>
+                            <p><strong>Uploaded:</strong> ${data.uploaded}</p>
+                            <p><strong>Description:</strong> ${data.description}</p>
+                            <p><strong>Video URL:</strong> <a href="${data.url}" target="_blank">Watch on YouTube</a></p>
+                        </div>
+                    `;
+                    loading.style.display = 'none';
+                    container.innerHTML = infoHtml;
+                } else {
+                    loading.style.display = 'none';
+                    container.innerHTML = `<div class="error">Error: ${result.error || result.message || 'Failed to fetch video information'}</div>`;
                 }
             } catch (error) {
                 loading.style.display = 'none';

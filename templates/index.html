@@ -434,15 +434,6 @@
                 </div>
             </div>
 
-            <div class="api-card">
-                <h3>🎬 YouTube Info</h3>
-                <p>Get detailed information about YouTube videos by URL or search query</p>
-                <input type="text" id="youtube-query" placeholder="Enter YouTube URL or video title..." style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                <button class="btn" onclick="fetchYouTubeInfo()">Get Video Info</button>
-                <div class="image-container" id="youtube-container">
-                    <div class="loading" id="youtube-loading" style="display: none;">Loading...</div>
-                </div>
-            </div>
             
 
         </div>
@@ -468,7 +459,6 @@
                 <li><code>GET /api/randomcolor</code> - Get a random hex color code</li>
                 <li><code>GET /api/fakeip</code> - Generate random fake IP addresses for testing</li>
                 <li><code>GET /api/nitro</code> - Generate fake Discord Nitro codes for testing</li>
-                <li><code>GET /api/youtube?query=URL_or_search_term</code> - Get YouTube video information by URL or search</li>
             </ul>
         </div>
     </div>
@@ -1127,51 +1117,6 @@
             }
         }
 
-        async function fetchYouTubeInfo() {
-            const query = document.getElementById('youtube-query').value.trim();
-            const container = document.getElementById('youtube-container');
-            const loading = document.getElementById('youtube-loading');
-            
-            if (!query) {
-                container.innerHTML = '<div class="error">Please enter a YouTube URL or video title</div>';
-                return;
-            }
-            
-            loading.style.display = 'block';
-            container.innerHTML = '<div class="loading" style="display: block;">Loading...</div>';
-            
-            try {
-                const response = await fetch(`/api/youtube?query=${encodeURIComponent(query)}`);
-                const result = await response.json();
-                
-                if (result.success && result.data) {
-                    const data = result.data;
-                    let infoHtml = `
-                        <div style="text-align: center;">
-                            ${data.thumbnail ? `<img src="${data.thumbnail}" alt="Video Thumbnail" class="api-image" style="max-width: 300px;">` : ''}
-                        </div>
-                        <div class="github-info-details">
-                            <p><strong>Title:</strong> ${data.title}</p>
-                            <p><strong>Channel:</strong> ${data.uploader}</p>
-                            <p><strong>Duration:</strong> ${data.duration_string}</p>
-                            <p><strong>Views:</strong> ${data.views ? data.views.toLocaleString() : 'N/A'}</p>
-                            <p><strong>Likes:</strong> ${data.likes ? data.likes.toLocaleString() : 'N/A'}</p>
-                            <p><strong>Uploaded:</strong> ${data.uploaded}</p>
-                            <p><strong>Description:</strong> ${data.description}</p>
-                            <p><strong>Video URL:</strong> <a href="${data.url}" target="_blank">Watch on YouTube</a></p>
-                        </div>
-                    `;
-                    loading.style.display = 'none';
-                    container.innerHTML = infoHtml;
-                } else {
-                    loading.style.display = 'none';
-                    container.innerHTML = `<div class="error">Error: ${result.error || result.message || 'Failed to fetch video information'}</div>`;
-                }
-            } catch (error) {
-                loading.style.display = 'none';
-                container.innerHTML = `<div class="error">Network error: ${error.message}</div>`;
-            }
-        }
 
         // Load sample images on page load
         window.addEventListener('load', () => {
